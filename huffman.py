@@ -216,7 +216,6 @@ class HuffmanBinaryStringConverter:
             currentNode = actualTree
 
             for j in huffmanDictionary[i]:
-
                 if j == '0':
                     if currentNode.getLeftBranch() is None:
                         blankNode = Node(None, 0)
