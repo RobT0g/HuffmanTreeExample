@@ -307,8 +307,7 @@ def restore():
 if __name__ == '__main__':
     runTestingForFolder('bee_movie')
     runTestingForFolder('lorem_ipsum')
+    runTestingForFolder('autosar')
     #HuffmanBinaryStringConverter.restoreSavedTree('bee_movie')
     #HuffmanBinaryStringConverter.restoreSavedTree('lorem_ipsum')
-    #beeMovieTest()
-    #loremIpsumTest()
-    #restore()
+    #HuffmanBinaryStringConverter.restoreSavedTree('autosar')
