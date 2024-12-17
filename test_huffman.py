@@ -28,6 +28,17 @@ def test_assign_right_branch(sample_tree_fixture):
     assert initialNode.getRightBranch().getValue() == sample_tree_fixture['right']
 
 @pytest.fixture
+def sample_character_counter() -> typing.Tuple[str, typing.Dict[str, int]]:
+    inputString = 'asofba acaacacahtrda'
+    count = {}
+    for i in inputString:
+        if count.get(i, None) is None:
+            count[i] = 1
+        else:
+            count[i] += 1
+    return inputString, count
+
+@pytest.fixture
 def sample_binary_characters_test() -> typing.Dict[str, str]:
     return {
         'input': 'abcsd',
@@ -46,3 +57,9 @@ def test_convert_single_binary_to_char():
 
 def test_convert_initial_text_to_binary(sample_binary_characters_test, sample_not_balanced_tree):
     assert sample_not_balanced_tree.getDefaultBinaryText() == sample_binary_characters_test['output']
+
+def test_character_counter_correctness(sample_character_counter):
+    string, count = sample_character_counter
+    huffCount = HuffmanTree.getCharacterCount(string)
+    for i in count:
+        assert huffCount[i] == count[i]

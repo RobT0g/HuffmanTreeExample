@@ -34,6 +34,15 @@ class HuffmanTree:
     def getDefaultBinaryText(self) -> str:
         return ' '.join(HuffmanTree.convertFromCharToBinary(c) for c in self.originalText)
 
+    def getCharacterCount(text: str) -> typing.Dict[str, int]:
+        count = {}
+        for i in text:
+            if count.get(i, None) is None:
+                count[i] = 1
+            else:
+                count[i] += 1
+        return count
+
     def convertFromCharToBinary(value:str) -> str:
         return format(ord(value), '08b')
 
