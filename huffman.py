@@ -125,16 +125,16 @@ class HuffmanTree:
         self.mapDictionary(currentStep.getRightBranch(), binaryString+'1')
 
     def convertIntoBinary(self) -> str:
-        converted = ''
+        self.basicBinaryText = ''
         for i in self.originalText:
-            converted += HuffmanTree.convertFromCharToBinary(i)
-        return converted
+            self.basicBinaryText += HuffmanTree.convertFromCharToBinary(i)
+        return self.basicBinaryText
 
     def convertIntoHuffmanBinary(self) -> str:
-        converted = ''
+        self.huffmanBinaryText = ''
         for i in self.originalText:
-            converted += self.huffmanDictionary[i]
-        return converted
+            self.huffmanBinaryText += self.huffmanDictionary[i]
+        return self.huffmanBinaryText
 
     def plotTreeBasic(self, currentStep:Node|None = None, level:int=0):
         if currentStep is None:
@@ -188,6 +188,21 @@ class HuffmanTree:
     def convertFromBinaryToChar(value:str) -> int:
         return chr(int(value, 2))
 
+    def convertBack(self) -> str:
+        currentNode = self.root
+        convertedText = ''
+        for i in self.huffmanBinaryText:
+            if i == '0':
+                currentNode = currentNode.getLeftBranch()
+            else:
+                currentNode = currentNode.getRightBranch()
+
+            if currentNode.getLeftBranch() is None and currentNode.getRightBranch() is None:
+                convertedText += currentNode.value
+                currentNode = self.root
+
+        return convertedText
+
 
 class HuffmanBinaryStringConverter:
     def restoreSavedTree(folderName:str):
@@ -214,9 +229,12 @@ class HuffmanBinaryStringConverter:
         actualTree = Node(None, 0)
         for i in huffmanDictionary:
             currentNode = actualTree
+            string = huffmanDictionary[i]
+            #print(string)
 
             for j in huffmanDictionary[i]:
                 if j == '0':
+                    #print('L', end='')
                     if currentNode.getLeftBranch() is None:
                         blankNode = Node(None, 0)
                         currentNode.assignLeft(blankNode)
@@ -225,6 +243,7 @@ class HuffmanBinaryStringConverter:
                         currentNode = currentNode.getLeftBranch()
 
                 else:
+                    #print('R', end='')
                     if currentNode.getRightBranch() is None:
                         blankNode = Node(None, 0)
                         currentNode.assignRight(blankNode)
@@ -234,21 +253,23 @@ class HuffmanBinaryStringConverter:
 
             currentNode.value = i
             currentNode.weight = weightDictionary[i]
+            #print(f' - {currentNode.value} = {currentNode.weight}')
 
         translatedText = ''
         currentNode = actualTree
 
         for i in huffmanText:
-            if currentNode.getLeftBranch() is None and currentNode.getRightBranch() is None:
-                translatedText += currentNode.value
-                currentNode = actualTree
-                continue
-
             if i == '0':
                 currentNode = currentNode.getLeftBranch()
 
             else:
                 currentNode = currentNode.getRightBranch()
+
+            if currentNode.getLeftBranch() is None and currentNode.getRightBranch() is None:
+                translatedText += currentNode.value
+                currentNode = actualTree
+                continue
+
         
         print(translatedText)
 
@@ -278,13 +299,16 @@ def runTestingForFolder(folderName:str):
     print(f'ASCII Binary String: {len(binaryResult)} bits')
     print(f'Huffman Binary String: {len(huffmanResult)} bits')
 
+    #print(tree.convertBack())
+
 def restore():
     HuffmanBinaryStringConverter.restoreSavedTree('bee_movie')
 
 if __name__ == '__main__':
-    #runTestingForFolder('bee_movie')
-    #runTestingForFolder('lorem_ipsum')
-    HuffmanBinaryStringConverter.restoreSavedTree('bee_movie')
+    runTestingForFolder('bee_movie')
+    runTestingForFolder('lorem_ipsum')
+    #HuffmanBinaryStringConverter.restoreSavedTree('bee_movie')
+    #HuffmanBinaryStringConverter.restoreSavedTree('lorem_ipsum')
     #beeMovieTest()
     #loremIpsumTest()
     #restore()
