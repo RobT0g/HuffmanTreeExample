@@ -11,7 +11,6 @@ def test_element_is_present(sample_ordered_list):
     ordered = sample_ordered_list.getList()
     for i in range(len(ordered)):
         check = sample_ordered_list.checkContain(ordered[i])
-        print(ordered[i], check)
         assert check[0]
         assert i >= check[1]
         assert i <= check[2]
@@ -21,16 +20,12 @@ def test_list_is_sorted(sample_ordered_list):
     for i in range(1, len(ordered)):
         assert ordered[i-1] <= ordered[i]
 
-def test_inserted_at_right_pos(sample_ordered_list):
-    sample_ordered_list.insertAtPos(10, 5)
-    assert sample_ordered_list.getList[5] == 10
-
 def test_inserted_at_right_ordered_pos(sample_ordered_list):
     pos = sample_ordered_list.insertOrdered(10, True)
     ordered = sample_ordered_list.getList()
     assert pos[1]
-    assert ordered[pos[0]] == 10
-    if pos[0] > 0:
-        assert ordered[pos-1] <= 10
-    if pos[0] < len(ordered)-1:
-        assert ordered[pos[0]+1]
+    assert ordered[pos[1]] == 10
+    if pos[1] > 0:
+        assert ordered[pos[1]-1] < 10
+    if pos[2] < len(ordered)-1:
+        assert ordered[pos[1]+1] > 10

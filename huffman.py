@@ -26,16 +26,15 @@ class BalancedList:
         self.__list:list = initialList
         self.__list.sort()
 
-    
-
     def checkContain(self, value:str|int) -> typing.Tuple[bool, int]:
         return BalancedList.__binary_search_helper(self.__list, value, 0, len(self.__list) - 1)
 
-    def insertAtPos(self, value:str|int) -> None:
-        pass
-
     def insertOrdered(self, value:str|int, repeatable:bool=True) -> typing.Tuple[bool, int, int]:
-        pass
+        check = self.checkContain(value)
+        self.__list.insert(check[1], value)
+        if not check[0]:
+            return True, check[1], check[2]
+        return True, check[1], check[2]+1
 
     def getList(self) -> list:
         return self.__list
@@ -44,7 +43,6 @@ class BalancedList:
         return BalancedList.__binary_search_helper(lst, value, 0, len(lst) - 1)
     
     def __binary_search_helper(lst, value, low, high) -> typing.Tuple[bool, int, int]:
-        print(low, high)
         if low > high:
             if lst[low] < value:
                 return False, low, low
