@@ -23,7 +23,7 @@ class Node:
         return self.__right
 
     def getSignature(self) -> str:
-        if self.value is None: return f'{self.weight} - '
+        #if self.value is None: return f'{self.weight} - '
         return f'{self.weight} - {self.value}'
 
 class BalancedList:
@@ -90,7 +90,6 @@ class BalancedList:
         
         return BalancedList.__binary_search_helper(lst, value, mid + 1, high)
 
-
 class HuffmanTree:
     def __init__(self, text:str, balance:bool=True):
         self.originalText:str = text
@@ -103,7 +102,7 @@ class HuffmanTree:
         characterPos:typing.List[Node] = []
 
         def helperAdd(v:str, index:int):
-            print([None if i is None else i.value for i in characterPos], v.value, v.weight, index)
+            #print([None if i is None else i.value for i in characterPos], v.value, v.weight, index)
             if characterPos[index] is None:
                 characterPos[index] = v
             else: 
@@ -120,41 +119,54 @@ class HuffmanTree:
             helperAdd(Node(i, count[i]), check[1])
         
         while len(characterPos) > 1:
+            print([(i.value, i.weight) for i in characterPos])
             newNode = Node(None, characterPos[0].weight + characterPos[1].weight)
             newNode.assignLeft(characterPos[0])
             newNode.assignRight(characterPos[1])
 
             characterPos.pop(0)
-            characterPos.pop(1)
+            characterPos.pop(0)
             orderedAmounts.dropVal(0)
-            orderedAmounts.dropVal(1)
+            orderedAmounts.dropVal(0)
 
             newNodePos = orderedAmounts.insertOrdered(newNode.weight)
             characterPos.insert(newNodePos[0], newNode)
         
         self.root = characterPos[0]
 
-    def plotTree(self):
+    def plotTreeBasic(self, currentStep:Node|None = None, level:int=0):
+        if currentStep is None:
+            currentStep = self.root
+        
+        print(f'{"-"*level}{currentStep.getSignature()}')
+        
+        if currentStep.getRightBranch() is None and currentStep.getLeftBranch() is None:
+            return
+        
+        self.plotTreeBasic(currentStep.getLeftBranch(), level+1)
+        self.plotTreeBasic(currentStep.getRightBranch(), level+1)
+
+    def plotTreeWithNetworkx(self):
         graph = nx.Graph()
         graph.add_node(self.root.getSignature())
-        self.mapTree(graph, self.root)
+        self.mapTreeWithNetworkx(graph, self.root)
 
-        pos = nx.spring_layout(graph, seed=42)
+        pos = nx.shell_layout(graph)
         nx.draw(graph, pos, with_labels=True, node_size=2000, node_color="skyblue", font_size=12, font_weight="bold", edge_color="gray")
         plt.title("Huffman Tree")
         plt.show()
 
-    def mapTree(self, graph:nx.Graph, currentStep:Node):
-        if currentStep.getRightBranch() is None and currentStep.getLeftBranch is None:
+    def mapTreeWithNetworkx(self, graph:nx.Graph, currentStep:Node):
+        if currentStep.getRightBranch() is None and currentStep.getLeftBranch() is None:
             return
         
         graph.add_node(currentStep.getLeftBranch().getSignature())
         graph.add_edge(currentStep.getSignature(), currentStep.getLeftBranch().getSignature())
-        self.mapTree(currentStep.getLeftBranch())
+        self.mapTreeWithNetworkx(graph, currentStep.getLeftBranch())
 
         graph.add_node(currentStep.getRightBranch().getSignature())
         graph.add_edge(currentStep.getSignature(), currentStep.getRightBranch().getSignature())
-        self.mapTree(currentStep.getRightBranch())
+        self.mapTreeWithNetworkx(graph, currentStep.getRightBranch())
 
     def getDefaultBinaryText(self) -> str:
         return ' '.join(HuffmanTree.convertFromCharToBinary(c) for c in self.originalText)
@@ -176,10 +188,9 @@ class HuffmanTree:
 
 
 if __name__ == '__main__':
-    # Usage
-    tree = HuffmanTree('iasogsdioasonaspvasdcpoiasnvaplsklmcojsiscpkasmca')
-    tree.plotTree()
-    '''tree.insert(5)
-    tree.insert(3)
-    tree.insert(7)
-    tree.in_order_traversal(tree.root)'''
+    #tree = HuffmanTree('iasogsdioasonaspvasdcpoiasnvaplsklmcojsiscpkasmca')
+    text = ''
+    with open('bee_movie.txt', 'r') as file:
+        text = file.read()
+    tree = HuffmanTree(text)
+    tree.plotTreeBasic()
