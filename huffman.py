@@ -21,6 +21,63 @@ class Node:
     def getRightBranch(self) -> 'Node':
         return self.__right
 
+class BalancedList:
+    def __init__(self, initialList:list=[]):
+        self.__list:list = initialList
+        self.__list.sort()
+
+    
+
+    def checkContain(self, value:str|int) -> typing.Tuple[bool, int]:
+        return BalancedList.__binary_search_helper(self.__list, value, 0, len(self.__list) - 1)
+
+    def insertAtPos(self, value:str|int) -> None:
+        pass
+
+    def insertOrdered(self, value:str|int, repeatable:bool=True) -> typing.Tuple[bool, int, int]:
+        pass
+
+    def getList(self) -> list:
+        return self.__list
+    
+    def binary_search(lst, value):
+        return BalancedList.__binary_search_helper(lst, value, 0, len(lst) - 1)
+    
+    def __binary_search_helper(lst, value, low, high) -> typing.Tuple[bool, int, int]:
+        print(low, high)
+        if low > high:
+            if lst[low] < value:
+                return False, low, low
+            return False, high, high
+        
+        mid = (low + high) // 2
+
+        if lst[mid] == value:
+            boundaries = [mid, mid]
+
+            for step in range(mid, -1, -1):
+                if lst[step] == value: continue
+                boundaries[0] = step+1
+                break
+
+            for step in range(mid, len(lst)):
+                if lst[step] == value: continue
+                boundaries[1] = step-1
+                break
+
+            return True, boundaries[0], boundaries[1]
+        
+        if low == high:
+            if lst[low] < value:
+                return False, low, low
+            return False, high, high
+
+        if value < lst[mid]:
+            return BalancedList.__binary_search_helper(lst, value, low, mid - 1)
+        
+        return BalancedList.__binary_search_helper(lst, value, mid + 1, high)
+
+
 class HuffmanTree:
     def __init__(self, text:str, balance:bool=True):
         self.originalText:str = text
