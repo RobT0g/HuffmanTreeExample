@@ -22,17 +22,23 @@ class Node:
         return self.__right
 
 class HuffmanTree:
-    def __init__(self):
+    def __init__(self, text:str, balance:bool=True):
+        self.originalText:str = text
+        self.count = []
         self.root = None
+        self.__balanceTree()
 
-    def getHuffmanTree(text:str) -> 'HuffmanTree':
-        tree = HuffmanTree()
+    def __balanceTree(self):
+        pass
 
-    def insert(self, value):
-        if self.root is None:
-            self.root = Node(value)
-        else:
-            self._insert_recursive(self.root, value)
+    def getDefaultBinaryText(self) -> str:
+        return ' '.join(HuffmanTree.convertFromCharToBinary(c) for c in self.originalText)
+
+    def convertFromCharToBinary(value:str) -> str:
+        return format(ord(value), '08b')
+
+    def convertFromBinaryToChar(value:str) -> int:
+        return chr(int(value, 2))
 
 
 if __name__ == '__main__':
