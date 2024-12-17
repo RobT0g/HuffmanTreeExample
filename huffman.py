@@ -1,4 +1,5 @@
 import typing
+from ete3 import Tree
 
 class Node:
     def __init__(self, value:str|None, weight:int):
@@ -80,11 +81,10 @@ class BalancedList:
 class HuffmanTree:
     def __init__(self, text:str, balance:bool=True):
         self.originalText:str = text
-        self.count = []
         self.root = None
-        self.__balanceTree()
+        if balance: self.balanceTree()
 
-    def __balanceTree(self):
+    def balanceTree(self):
         def helperAdd(v:str, index:int):
             if characterPos[index] is None:
                 characterPos[index] = v
@@ -117,6 +117,24 @@ class HuffmanTree:
         
         self.root = characterPos[0]
 
+    def plotTree(self):
+        t = Tree(self.stringifyTree(self.root))
+        t.show()
+
+    def stringifyTree(self, currentStep:Node):
+        if currentStep.getRightBranch() is None and currentStep.getLeftBranch is None:
+            return f'{currentStep.weight} - {currentStep.value}'
+        stringified = '('
+        if currentStep.getRightBranch() is not None:
+            stringified += f'{self.stringifyTree(currentStep.getRightBranch())},'
+        else:
+            stringified += 'None,'
+        if currentStep.getLeftBranch() is not None:
+            stringified += f'{self.stringifyTree(currentStep.getLeftBranch())})'
+        else:
+            stringified += 'None)'
+        return stringified
+
     def getDefaultBinaryText(self) -> str:
         return ' '.join(HuffmanTree.convertFromCharToBinary(c) for c in self.originalText)
 
@@ -138,8 +156,8 @@ class HuffmanTree:
 
 if __name__ == '__main__':
     # Usage
-    #tree = HuffmanTree()
-    print(HuffmanTree.getCharacterCount('asnasvbiasaomciuqfasasoicbnas'))
+    tree = HuffmanTree('iasogsdioasonaspvasdcpoiasnvaplsklmcojsiscpkasmca')
+    tree.plotTree()
     '''tree.insert(5)
     tree.insert(3)
     tree.insert(7)
