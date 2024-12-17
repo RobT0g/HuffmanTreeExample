@@ -1,5 +1,4 @@
 import typing
-from ete3 import Tree
 
 class Node:
     def __init__(self, value:str|None, weight:int):
@@ -118,8 +117,9 @@ class HuffmanTree:
         self.root = characterPos[0]
 
     def plotTree(self):
-        t = Tree(self.stringifyTree(self.root))
-        t.show()
+        pass
+        #t = Tree(self.stringifyTree(self.root))
+        #t.show()
 
     def stringifyTree(self, currentStep:Node):
         if currentStep.getRightBranch() is None and currentStep.getLeftBranch is None:
