@@ -8,24 +8,25 @@ def sample_tree_fixture() -> Node:
     return nodes
 
 def test_create_initial_node(sample_tree_fixture):
-    initialNode = Node(sample_tree_fixture['root'])
-    assert initialNode.getValue() == sample_tree_fixture['root']
+    initialNode = Node(sample_tree_fixture['root'], 10)
+    assert initialNode.value == sample_tree_fixture['root']
     assert initialNode.getLeftBranch() is None
     assert initialNode.getRightBranch() is None
+    assert initialNode.weight == 10
 
 def test_assign_left_branch(sample_tree_fixture):
-    initialNode = Node(sample_tree_fixture['root'])
-    leftNode = Node(sample_tree_fixture['left'])
+    initialNode = Node(sample_tree_fixture['root'], 0)
+    leftNode = Node(sample_tree_fixture['left'], 0)
     initialNode.assignLeft(leftNode)
     assert initialNode.getLeftBranch() == leftNode
-    assert initialNode.getLeftBranch().getValue() == sample_tree_fixture['left']
+    assert initialNode.getLeftBranch().value == sample_tree_fixture['left']
 
 def test_assign_right_branch(sample_tree_fixture):
-    initialNode = Node(sample_tree_fixture['root'])
-    rightNode = Node(sample_tree_fixture['right'])
+    initialNode = Node(sample_tree_fixture['root'], 0)
+    rightNode = Node(sample_tree_fixture['right'], 0)
     initialNode.assignRight(rightNode)
     assert initialNode.getRightBranch() == rightNode
-    assert initialNode.getRightBranch().getValue() == sample_tree_fixture['right']
+    assert initialNode.getRightBranch().value == sample_tree_fixture['right']
 
 @pytest.fixture
 def sample_character_counter() -> typing.Tuple[str, typing.Dict[str, int]]:

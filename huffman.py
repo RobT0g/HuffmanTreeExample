@@ -1,13 +1,11 @@
 import typing
 
 class Node:
-    def __init__(self, value:str):
-        self.__value:str = value
+    def __init__(self, value:str|None, weight:int):
+        self.value:str|None = value
+        self.weight:int = weight
         self.__left:Node|None = None
         self.__right:Node|None = None
-
-    def getValue(self) -> str:
-        return self.__value
     
     def assignLeft(self, newNode:'Node') -> None:
         self.__left = newNode
@@ -35,9 +33,12 @@ class BalancedList:
         if not check[0]:
             return True, check[1], check[2]
         return True, check[1], check[2]+1
+    
+    def dropVal(self, index:int):
+        self.__list.pop(index)
 
     def getList(self) -> list:
-        return self.__list
+        return self.__list[:]
     
     def binary_search(lst, value):
         return BalancedList.__binary_search_helper(lst, value, 0, len(lst) - 1)
@@ -84,7 +85,35 @@ class HuffmanTree:
         self.__balanceTree()
 
     def __balanceTree(self):
-        pass
+        def helperAdd(v:str, index:int):
+            if characterPos[index] is None:
+                characterPos[index] = v
+            else: helperAdd(v, index+1)
+
+        count:dict = HuffmanTree.getCharacterCount(self.originalText)
+        orderedAmounts = BalancedList()
+        characterPos:typing.List[Node] = []
+
+        for i in count: 
+            orderedAmounts.insertOrdered(count[i])
+            characterPos.append(None)
+
+        for i in count:
+            check = orderedAmounts.checkContain(count[i])
+            helperAdd(Node(i, count[i]), check[0])
+        
+        for i in range(len(characterPos)-1, 0, -1):
+            newNode = Node(None, characterPos[i].weight + characterPos[i-1].weight)
+            newNode.assignLeft(characterPos[i-1])
+            newNode.assignRight(characterPos[i])
+
+            characterPos.pop(i)
+            characterPos.pop(i-1)
+            orderedAmounts.dropVal(i)
+            orderedAmounts.dropVal(i-1)
+
+            newNodePos = orderedAmounts.insertOrdered(newNode.weight)
+            characterPos.insert(newNodePos[0], newNode)
 
     def getDefaultBinaryText(self) -> str:
         return ' '.join(HuffmanTree.convertFromCharToBinary(c) for c in self.originalText)
@@ -107,7 +136,8 @@ class HuffmanTree:
 
 if __name__ == '__main__':
     # Usage
-    tree = HuffmanTree()
+    #tree = HuffmanTree()
+    print(HuffmanTree.getCharacterCount('asnasvbiasaomciuqfasasoicbnas'))
     '''tree.insert(5)
     tree.insert(3)
     tree.insert(7)
