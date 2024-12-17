@@ -114,6 +114,8 @@ class HuffmanTree:
 
             newNodePos = orderedAmounts.insertOrdered(newNode.weight)
             characterPos.insert(newNodePos[0], newNode)
+        
+        self.root = characterPos[0]
 
     def getDefaultBinaryText(self) -> str:
         return ' '.join(HuffmanTree.convertFromCharToBinary(c) for c in self.originalText)
