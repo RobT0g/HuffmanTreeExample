@@ -48,7 +48,7 @@ def sample_binary_characters_test() -> typing.Dict[str, str]:
 
 @pytest.fixture
 def sample_not_balanced_tree(sample_binary_characters_test) -> HuffmanTree:
-    return HuffmanTree(sample_binary_characters_test['input'])
+    return HuffmanTree(sample_binary_characters_test['input'], False)
 
 def test_convert_single_char_to_binary():
     assert HuffmanTree.convertFromCharToBinary('a') == '01100001'

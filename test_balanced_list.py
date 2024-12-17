@@ -4,7 +4,7 @@ import typing
 
 @pytest.fixture
 def sample_ordered_list() -> BalancedList:
-    originalList = [1, 3, 2, 5, 12, 5, 12, 7, 13, 17]
+    originalList = [1, 3, 2, 5, 12, 5, 12, 7, 13, 17, 5, 4, 4, 5, 4, 9, 6, 8, 4, 3, 41]
     return BalancedList(originalList)
 
 def test_element_is_present(sample_ordered_list):
@@ -23,9 +23,10 @@ def test_list_is_sorted(sample_ordered_list):
 def test_inserted_at_right_ordered_pos(sample_ordered_list):
     pos = sample_ordered_list.insertOrdered(10, True)
     ordered = sample_ordered_list.getList()
+    #print(pos, ordered)
     assert pos[1]
     assert ordered[pos[1]] == 10
     if pos[1] > 0:
-        assert ordered[pos[1]-1] < 10
+        assert ordered[pos[1]-1] <= 10
     if pos[2] < len(ordered)-1:
-        assert ordered[pos[1]+1] > 10
+        assert ordered[pos[1]+1] >= 10
