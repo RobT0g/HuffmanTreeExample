@@ -4,44 +4,44 @@ from DataStructures import *
 
 #Node tests
 @pytest.fixture
-def sample_nodes() -> Node:
+def sample_tree_schema() -> list:    
     treeSchema = [
-        ('A', 27)
+        ('A', 27),
         [
-            (None, 3)
-            ('R', 9)
+            (None, 3),
+            ('R', 9),
             ('B', 1),
         ], [
-            ('G', 6)
+            ('G', 6),
             ('C', 1),
             [
-                ('l', 13)
+                ('l', 13),
                 ('D', 7), 
                 (' ', 15)
             ]
         ]
     ]
 
-    def depthFirstNav(currentNode:Node, currentStep:tuple|list):
-        if type(currentStep) is tuple: return
-        
-        leftNode = Node()
-        if type(currentStep[0]) is tuple:
-            leftNode = Node(currentStep[0][0], currentStep[0][1])
-        
-        currentNode.assignLeft(leftNode)
-        depthFirstNav(leftNode, currentStep[0])
+    return treeSchema
 
-        rightNode = Node()
-        if type(currentStep[1] is tuple):
-            rightNode = Node(currentStep[1][0], currentStep[1][1])
+@pytest.fixture
+def sample_nodes(sample_tree_schema) -> Node:
+    def depthFirstNav(currentStep:tuple|list) -> Node:
+        if type(currentStep) is tuple: 
+            return Node(currentStep[0], currentStep[1])
         
-        currentStep.assignRight(rightNode)
-        depthFirstNav(currentStep[1])
+        actualNode = Node(currentStep[0][0], currentStep[0][1])
+        actualNode.assignLeft(depthFirstNav(currentStep[1]))
+        actualNode.assignRight(depthFirstNav(currentStep[2]))
 
-    actualTree = Node()
-    depthFirstNav(actualTree, treeSchema)
+        return actualNode
+
+
+    actualTree = depthFirstNav(sample_tree_schema)
     return actualTree
+
+def test_root_node_signature_correctness(sample_tree_schema, sample_nodes):
+    assert Node(sample_tree_schema[0][0], sample_tree_schema[0][1]).getSignature() == sample_nodes.getSignature()
 
 @pytest.fixture
 def sample_ordered_list() -> BalancedList:
