@@ -1,63 +1,9 @@
 import typing
 import matplotlib.pyplot as plt
+from DataStructures import *
 import networkx as nx
 import numpy as np
 import json
-
-class Node:
-    def __init__(self, value:str|None, weight:int):
-        self.value:str|None = value
-        self.weight:int = weight
-        self.__left:Node|None = None
-        self.__right:Node|None = None
-    
-    def assignLeft(self, newNode:'Node') -> None:
-        self.__left = newNode
-    
-    def assignRight(self, newNode: 'Node') -> None:
-        self.__right = newNode
-
-    def getLeftBranch(self) -> 'Node':
-        return self.__left
-    
-    def getRightBranch(self) -> 'Node':
-        return self.__right
-
-    def getSignature(self) -> str:
-        #if self.value is None: return f'{self.weight} - '
-        return f'{self.weight} - {self.value}'
-
-class BalancedList:
-    def __init__(self, initialList:list=[]):
-        self.__list:np.ndarray = np.array(initialList)
-        self.__list.sort()
-
-    def checkContain(self, value:str|int) -> typing.Tuple[bool, int]:
-        pos = self.__list.searchsorted(value)
-        
-        if self.__list[pos] != value:
-            return False, pos, pos
-        
-        endAt = pos+1
-        while True:
-            if endAt >= len(self.__list):
-                break
-            if self.__list[endAt] > value:
-                break
-            endAt += 1
-        return True, pos, endAt-1
-        
-    def insertOrdered(self, value:str|int, repeatable:bool=True) -> typing.Tuple[bool, int, int]:
-        pos = self.__list.searchsorted(value)
-        self.__list = np.insert(self.__list, pos, value)
-        return True, pos, pos
-    
-    def dropVal(self, index:int):
-        self.__list = np.delete(self.__list, index)
-
-    def getList(self) -> list:
-        return self.__list.copy()
-
 
 class HuffmanTree:
     def __init__(self, text:str, balance:bool=True):

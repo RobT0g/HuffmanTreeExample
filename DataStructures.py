@@ -114,22 +114,21 @@ class BalancedList:
         self.__list.sort()
 
     def checkContain(self, value:str|int) -> typing.Tuple[bool, int]:
-        pos = self.__list.searchsorted(value)
+        pos = self.__list.searchsorted(value, side='left')
         
         if self.__list[pos] != value:
             return False, pos, pos
         
-        endAt = pos+1
-        while True:
-            if endAt >= len(self.__list):
-                break
-            if self.__list[endAt] > value:
-                break
-            endAt += 1
+        endAt = self.__list.searchsorted(value, side='right')
         return True, pos, endAt-1
         
-    def insertOrdered(self, value:str|int, repeatable:bool=True) -> typing.Tuple[bool, int, int]:
-        pos = self.__list.searchsorted(value)
+    def insertOrdered(self, value:str|int) -> typing.Tuple[bool, int, int]:
+        pos = self.checkContain(value)
+        if pos[0]:
+            pos = pos[2]+1
+        else:
+            pos = pos[2]
+        
         self.__list = np.insert(self.__list, pos, value)
         return True, pos, pos
     
@@ -138,3 +137,7 @@ class BalancedList:
 
     def getList(self) -> list:
         return self.__list.copy()
+    
+    def __str__(self) -> str:
+        return str(self.__list)
+

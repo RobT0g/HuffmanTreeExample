@@ -119,7 +119,7 @@ def sample_ordered_list() -> BalancedList:
     originalList = [1, 3, 2, 5, 12, 5, 12, 7, 13, 17, 5, 4, 4, 5, 4, 9, 6, 8, 4, 3, 41]
     return BalancedList(originalList)
 
-def test_element_is_present(sample_ordered_list):
+def test_element_is_present(sample_ordered_list:BalancedList):
     ordered = sample_ordered_list.getList()
     for i in range(len(ordered)):
         check = sample_ordered_list.checkContain(ordered[i])
