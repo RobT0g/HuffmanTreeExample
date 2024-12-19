@@ -73,6 +73,40 @@ class Node:
 
         return actualNode
 
+    def plotTreeBasic(self, currentStep:'Node' = None, level:int=0):
+        if currentStep is None:
+            currentStep = self
+        
+        print(f'{"-"*level}{currentStep.getSignature()}')
+        
+        if currentStep.getRightBranch() is None and currentStep.getLeftBranch() is None:
+            return
+        
+        self.plotTreeBasic(currentStep.getLeftBranch(), level+1)
+        self.plotTreeBasic(currentStep.getRightBranch(), level+1)
+
+    def plotTreeWithNetworkx(self):
+        graph = nx.Graph()
+        graph.add_node(self.getSignature())
+        self.mapTreeWithNetworkx(graph, self)
+
+        pos = nx.spring_layout(graph)
+        nx.draw(graph, pos, with_labels=True, node_size=2000, node_color="skyblue", font_size=12, font_weight="bold", edge_color="gray")
+        plt.title("Huffman Tree")
+        plt.show()
+
+    def mapTreeWithNetworkx(self, graph:nx.Graph, currentStep:'Node'):
+        if currentStep.getRightBranch() is None and currentStep.getLeftBranch() is None:
+            return
+        
+        graph.add_node(currentStep.getLeftBranch().getSignature())
+        graph.add_edge(currentStep.getSignature(), currentStep.getLeftBranch().getSignature())
+        self.mapTreeWithNetworkx(graph, currentStep.getLeftBranch())
+
+        graph.add_node(currentStep.getRightBranch().getSignature())
+        graph.add_edge(currentStep.getSignature(), currentStep.getRightBranch().getSignature())
+        self.mapTreeWithNetworkx(graph, currentStep.getRightBranch())
+
 
 class BalancedList:
     def __init__(self, initialList:list=[]):
