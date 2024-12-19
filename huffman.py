@@ -4,7 +4,7 @@ import json
 
 class HuffmanTree:
     def __init__(self, folderPath:str, balance:bool=True):
-        pass
+        self.folderPath = folderPath
     
     def balanceTree(self):
         pass
