@@ -36,61 +36,43 @@ def sample_tree_schema() -> list:
 
 @pytest.fixture
 def sample_tree_created_with_original(sample_tree_schema) -> Node:
-    def depthFirstNav(currentStep:list|dict) -> Node:
-        if type(currentStep) is list: 
-            return Node(currentStep[0], currentStep[1])
-        
-        actualNode = Node(currentStep[""][0][0], currentStep[""][0][1])
-        actualNode.assignLeft(depthFirstNav(currentStep[""][1]))
-        actualNode.assignRight(depthFirstNav(currentStep[""][2]))
-
-        return actualNode
-
-
-    actualTree = depthFirstNav(sample_tree_schema)
-    return actualTree
+    return Node.recursiveRebuildFromDict(sample_tree_schema)
 
 @pytest.fixture
 def sample_tree_created_from_json_string(sample_tree_schema) -> Node:
-    return Node.fromJSONString(json.dumps(sample_tree_schema))
+    return Node.recursiveRebuildFromDict(json.loads(json.dumps(sample_tree_schema)))
 
-@pytest.mark.parametrize("sample_tree", ['sample_tree_created_with_original', 'sample_tree_created_from_json_string'])
-def test_root_node_signature_correctness(sample_tree_schema:dict, sample_tree:Node):
-    assert Node(sample_tree_schema[""][0][0], sample_tree_schema[""][0][1]).getSignature() == sample_tree.getSignature()
+def test_root_node_signature_correctness(sample_tree_schema:dict, sample_tree_created_with_original:Node):
+    assert Node(sample_tree_schema[""][0][0], sample_tree_schema[""][0][1]).getSignature() == sample_tree_created_with_original.getSignature()
 
-@pytest.mark.parametrize("sample_tree", ['sample_tree_created_with_original', 'sample_tree_created_from_json_string'])
-def test_root_left_branch_signature_correctness(sample_tree_schema:list, sample_tree:Node):
+def test_root_left_branch_signature_correctness(sample_tree_schema:list, sample_tree_created_with_original:Node):
     leftBranch = sample_tree_schema[""][1]
     if type(leftBranch) is dict:
         leftBranch = leftBranch[""][0]
     leftBranch = Node(leftBranch[0], leftBranch[1])
 
-    assert leftBranch.getSignature() == sample_tree.getLeftBranch().getSignature()
+    assert leftBranch.getSignature() == sample_tree_created_with_original.getLeftBranch().getSignature()
 
-@pytest.mark.parametrize("sample_tree", ['sample_tree_created_with_original', 'sample_tree_created_from_json_string'])
-def test_root_right_branch_signature_correctness(sample_tree_schema:list, sample_tree:Node):
+def test_root_right_branch_signature_correctness(sample_tree_schema:list, sample_tree_created_with_original:Node):
     rightBranch = sample_tree_schema[""][2]
     if type(rightBranch) is dict:
         rightBranch = rightBranch[""][0]
     rightBranch = Node(rightBranch[0], rightBranch[1])
 
-    assert rightBranch.getSignature() == sample_tree.getRightBranch().getSignature()
+    assert rightBranch.getSignature() == sample_tree_created_with_original.getRightBranch().getSignature()
 
-@pytest.mark.parametrize("sample_tree", ['sample_tree_created_with_original', 'sample_tree_created_from_json_string'])
-def test_assign_none_value_on_left_branch(sample_tree:Node):
+def test_assign_none_value_on_left_branch(sample_tree_created_with_original:Node):
     with pytest.raises(TypeError):
-        sample_tree.assignLeft(None)
+        sample_tree_created_with_original.assignLeft(None)
 
-@pytest.mark.parametrize("sample_tree", ['sample_tree_created_with_original', 'sample_tree_created_from_json_string'])
-def test_assign_none_value_on_right_branch(sample_tree:Node):
+def test_assign_none_value_on_right_branch(sample_tree_created_with_original:Node):
     with pytest.raises(TypeError):
-        sample_tree.assignRight(None)
+        sample_tree_created_with_original.assignRight(None)
 
-@pytest.mark.parametrize("sample_tree", ['sample_tree_created_with_original', 'sample_tree_created_from_json_string'])
-def test_save_tree_into_json_file(sample_tree:Node):
-    sample_tree.toJSONFile('tests/sample_tree.json')
+def test_save_tree_into_json_file(sample_tree_created_with_original:Node):
+    sample_tree_created_with_original.toJSONFile('sample_tree.json')
     with open('sample_tree.json', 'r') as file:
-        assert json.loads(file.read()) == sample_tree.toJSONString()
+        assert json.load(file) == sample_tree_created_with_original.JSONDictHelper(sample_tree_created_with_original)
 
 
 

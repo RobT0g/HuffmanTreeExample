@@ -38,38 +38,23 @@ class Node:
     def __str__(self) -> str:
         return self.getSignature()
 
+    def toJSONFile(self, fileName: str) -> None:
+        'Creates a JSON string and saves it into the specified file'
+        with open(fileName, 'w') as file:
+            json.dump(self.JSONDictHelper(self), file, default=lambda x: x.__dict__, indent=4)
+
     @staticmethod
-    def __JSONStringHelper(currentStep:'Node') -> dict|list:
+    def JSONDictHelper(currentStep:'Node') -> dict|list:
         'Recursive function to create a dictionary with the Node information'
         if currentStep.getLeftBranch() is None and currentStep.getRightBranch() is None:
             return [currentStep.value, currentStep.weight]
         return {
             '': [
                 [currentStep.value, currentStep.weight],
-                currentStep.__JSONStringHelper(currentStep.getLeftBranch()),
-                currentStep.__JSONStringHelper(currentStep.getRightBranch())
+                currentStep.JSONDictHelper(currentStep.getLeftBranch()),
+                currentStep.JSONDictHelper(currentStep.getRightBranch())
             ]
         }
-
-    @staticmethod
-    def recursiveRebuildFromDict(currentStep:dict) -> 'Node':
-        if type(currentStep) is list: 
-            return Node(currentStep[0], currentStep[1])
-        
-        actualNode = Node(currentStep[""][0][0], currentStep[""][0][1])
-        actualNode.assignLeft(Node.__rebuildFromDictHelper(currentStep[""][1]))
-        actualNode.assignRight(Node.__rebuildFromDictHelper(currentStep[""][2]))
-
-        return actualNode
-
-    def toJSONString(self) -> str:
-        'Creates a JSON string with the Node information'
-        return json.dumps(self.__JSONStringHelper(self), default=lambda x: x.__dict__, indent=4)
-
-    def toJSONFile(self, fileName: str) -> None:
-        'Creates a JSON string and saves it into the specified file'
-        with open(fileName, 'w') as file:
-            json.dump(self.toJSONString(), file, default=lambda x: x.__dict__, indent=4)
 
     @staticmethod
     def fromJSONFile(fileName: str) -> 'Node':
@@ -77,6 +62,16 @@ class Node:
         with open(fileName, 'r') as file:
             return Node.recursiveRebuildFromDict(json.loads(file.read()))
 
+    @staticmethod
+    def recursiveRebuildFromDict(currentStep:dict) -> 'Node':
+        if type(currentStep) is list: 
+            return Node(currentStep[0], currentStep[1])
+        
+        actualNode = Node(currentStep[""][0][0], currentStep[""][0][1])
+        actualNode.assignLeft(Node.recursiveRebuildFromDict(currentStep[""][1]))
+        actualNode.assignRight(Node.recursiveRebuildFromDict(currentStep[""][2]))
+
+        return actualNode
 
 
 class BalancedList:
