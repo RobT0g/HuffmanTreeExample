@@ -116,6 +116,9 @@ class BalancedList:
     def checkContain(self, value:str|int) -> typing.Tuple[bool, int]:
         pos = self.__list.searchsorted(value, side='left')
         
+        if pos >= len(self.__list):
+            return False, pos, pos
+
         if self.__list[pos] != value:
             return False, pos, pos
         

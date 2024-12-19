@@ -119,26 +119,26 @@ def sample_ordered_list() -> BalancedList:
     originalList = [1, 3, 2, 5, 12, 5, 12, 7, 13, 17, 5, 4, 4, 5, 4, 9, 6, 8, 4, 3, 41]
     return BalancedList(originalList)
 
-def test_element_is_present(sample_ordered_list:BalancedList):
-    ordered = sample_ordered_list.getList()
-    for i in range(len(ordered)):
-        check = sample_ordered_list.checkContain(ordered[i])
-        assert check[0]
-        assert i >= check[1]
-        assert i <= check[2]
-
-def test_list_is_sorted(sample_ordered_list):
+def test_initial_list_is_sorted(sample_ordered_list:BalancedList):
     ordered = sample_ordered_list.getList()
     for i in range(1, len(ordered)):
         assert ordered[i-1] <= ordered[i]
 
-def test_inserted_at_right_ordered_pos(sample_ordered_list):
-    pos = sample_ordered_list.insertOrdered(10, True)
+def test_check_contain(sample_ordered_list:BalancedList):
     ordered = sample_ordered_list.getList()
-    #print(pos, ordered)
-    assert pos[1]
-    assert ordered[pos[1]] == 10
+    for i in range(len(ordered)):
+        pos = sample_ordered_list.checkContain(ordered[i])
+        assert pos[0]
+        assert ordered[pos[1]] == ordered[i]
+        assert ordered[pos[2]] == ordered[i]
+
+@pytest.mark.parametrize("element", [1, 2, 3, 4, 5, 6, 7, 8, 9, 12, 13, 17, 41, 100, -2, -5, 7, 1])
+def test_inserted_at_right_ordered_pos(sample_ordered_list:BalancedList, element:int):
+    pos = sample_ordered_list.insertOrdered(element)
+    ordered = sample_ordered_list.getList()
+    assert ordered[pos[1]] == element
     if pos[1] > 0:
-        assert ordered[pos[1]-1] <= 10
+        assert ordered[pos[1]-1] <= element
     if pos[2] < len(ordered)-1:
-        assert ordered[pos[1]+1] >= 10
+        assert ordered[pos[1]+1] > element
+
