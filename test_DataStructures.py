@@ -74,7 +74,44 @@ def test_save_tree_into_json_file(sample_tree_created_with_original:Node):
     with open('sample_tree.json', 'r') as file:
         assert json.load(file) == sample_tree_created_with_original.JSONDictHelper(sample_tree_created_with_original)
 
+def test_load_tree_from_json_file(sample_tree_created_with_original:Node):
+    sample_tree_created_with_original.toJSONFile('sample_tree.json')
+    loadedTree = Node.fromJSONFile('sample_tree.json')
+    assert loadedTree.JSONDictHelper(loadedTree) == sample_tree_created_with_original.JSONDictHelper(sample_tree_created_with_original)
 
+def test_root_left_branch_signature_correctness_json(sample_tree_schema:list, sample_tree_created_from_json_string:Node):
+    leftBranch = sample_tree_schema[""][1]
+    if type(leftBranch) is dict:
+        leftBranch = leftBranch[""][0]
+    leftBranch = Node(leftBranch[0], leftBranch[1])
+
+    assert leftBranch.getSignature() == sample_tree_created_from_json_string.getLeftBranch().getSignature()
+
+def test_root_right_branch_signature_correctness_json(sample_tree_schema:list, sample_tree_created_from_json_string:Node):
+    rightBranch = sample_tree_schema[""][2]
+    if type(rightBranch) is dict:
+        rightBranch = rightBranch[""][0]
+    rightBranch = Node(rightBranch[0], rightBranch[1])
+
+    assert rightBranch.getSignature() == sample_tree_created_from_json_string.getRightBranch().getSignature()
+
+def test_assign_none_value_on_left_branch_json(sample_tree_created_from_json_string:Node):
+    with pytest.raises(TypeError):
+        sample_tree_created_from_json_string.assignLeft(None)
+
+def test_assign_none_value_on_right_branch_json(sample_tree_created_from_json_string:Node):
+    with pytest.raises(TypeError):
+        sample_tree_created_from_json_string.assignRight(None)
+
+def test_save_tree_into_json_file_json(sample_tree_created_from_json_string:Node):
+    sample_tree_created_from_json_string.toJSONFile('sample_tree.json')
+    with open('sample_tree.json', 'r') as file:
+        assert json.load(file) == sample_tree_created_from_json_string.JSONDictHelper(sample_tree_created_from_json_string)
+
+def test_load_tree_from_json_file_json(sample_tree_created_from_json_string:Node):
+    sample_tree_created_from_json_string.toJSONFile('sample_tree.json')
+    loadedTree = Node.fromJSONFile('sample_tree.json')
+    assert loadedTree.JSONDictHelper(loadedTree) == sample_tree_created_from_json_string.JSONDictHelper(sample_tree_created_from_json_string)
 
 #BalancedList tests
 @pytest.fixture
