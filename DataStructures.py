@@ -35,6 +35,50 @@ class Node:
         'Returns the Node signature which is "{weight} - {value}"'
         return f'{self.weight} - {self.value}'
 
+    def __str__(self) -> str:
+        return self.getSignature()
+
+    @staticmethod
+    def __JSONStringHelper(currentStep:'Node') -> dict|list:
+        'Recursive function to create a dictionary with the Node information'
+        if currentStep.getLeftBranch() is None and currentStep.getRightBranch() is None:
+            return [currentStep.value, currentStep.weight]
+        return {
+            '': [
+                [currentStep.value, currentStep.weight],
+                currentStep.__JSONStringHelper(currentStep.getLeftBranch()),
+                currentStep.__JSONStringHelper(currentStep.getRightBranch())
+            ]
+        }
+
+    @staticmethod
+    def recursiveRebuildFromDict(currentStep:dict) -> 'Node':
+        if type(currentStep) is list: 
+            return Node(currentStep[0], currentStep[1])
+        
+        actualNode = Node(currentStep[""][0][0], currentStep[""][0][1])
+        actualNode.assignLeft(Node.__rebuildFromDictHelper(currentStep[""][1]))
+        actualNode.assignRight(Node.__rebuildFromDictHelper(currentStep[""][2]))
+
+        return actualNode
+
+    def toJSONString(self) -> str:
+        'Creates a JSON string with the Node information'
+        return json.dumps(self.__JSONStringHelper(self), default=lambda x: x.__dict__, indent=4)
+
+    def toJSONFile(self, fileName: str) -> None:
+        'Creates a JSON string and saves it into the specified file'
+        with open(fileName, 'w') as file:
+            json.dump(self.toJSONString(), file, default=lambda x: x.__dict__, indent=4)
+
+    @staticmethod
+    def fromJSONFile(fileName: str) -> 'Node':
+        'Reads a JSON file and returns a Node object'
+        with open(fileName, 'r') as file:
+            return Node.recursiveRebuildFromDict(json.loads(file.read()))
+
+
+
 class BalancedList:
     def __init__(self, initialList:list=[]):
         self.__list:np.ndarray = np.array(initialList)

@@ -86,6 +86,14 @@ def test_assign_none_value_on_right_branch(sample_tree:Node):
     with pytest.raises(TypeError):
         sample_tree.assignRight(None)
 
+@pytest.mark.parametrize("sample_tree", ['sample_tree_created_with_original', 'sample_tree_created_from_json_string'])
+def test_save_tree_into_json_file(sample_tree:Node):
+    sample_tree.toJSONFile('tests/sample_tree.json')
+    with open('sample_tree.json', 'r') as file:
+        assert json.loads(file.read()) == sample_tree.toJSONString()
+
+
+
 #BalancedList tests
 @pytest.fixture
 def sample_ordered_list() -> BalancedList:
