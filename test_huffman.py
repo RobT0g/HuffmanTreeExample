@@ -302,6 +302,10 @@ def test_is_summary_report_correct(sample_tree:HuffmanTree):
     assert summaryDictionary['Binary text length'] == len(sample_tree.getBinaryString())
     assert summaryDictionary['Huffman text length'] == len(sample_tree.getHuffmanBinaryString())
 
+@pytest.mark.parametrize('sample_tree', sampleTrees)
+def test_is_binary_huffman_string_shorter(sample_tree:HuffmanTree):
+    sample_tree.balanceTree()
+    assert len(sample_tree.getBinaryString()) > len(sample_tree.getHuffmanBinaryString())
 
 @pytest.mark.parametrize('sample_tree', sampleTrees)
 def test_is_string_restored_correctly(sample_tree:HuffmanTree):

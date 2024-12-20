@@ -81,7 +81,7 @@ class HuffmanTree:
             json.dump(self.getWeightDictionary(), file, indent=4)
 
     def getSummaryReport(self) -> str:
-        summary = f'\n\n------ Running Huffman Tree on ------{self.folderPath}\n'
+        summary = f'\n\n------ Running Huffman Tree on {self.folderPath} ------\n'
         summary += f'Original text length: {len(self.originalText)}\n'
         summary += f'Binary text length: {len(self.getBinaryString())}\n'
         summary += f'Huffman text length: {len(self.getHuffmanBinaryString())}\n'
@@ -187,6 +187,11 @@ class HuffmanTree:
         return tree
         
 
-
 if __name__ == '__main__':
-    testingTree = HuffmanTree('bee_movie', True, False)
+    samples = ['bee_movie', 'lorem_ipsum', 'autosar']
+    for i in samples:
+        tree = HuffmanTree(i)
+        tree.saveToFolder()
+        tree.getSummaryReport()
+        #print(tree.restoreHuffmanString())
+        print('-----------------------------------')
