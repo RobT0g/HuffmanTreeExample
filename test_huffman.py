@@ -52,7 +52,6 @@ def test_can_convert_char_to_binary(characters:str, binary:str):
 @pytest.mark.parametrize(
     ('characters'),
     [
-        '',
         None,
         {},
         []
@@ -62,4 +61,44 @@ def test_invalid_character_raises_error(characters:any):
     with pytest.raises(TypeError):
         HuffmanTree.nonHuffman_convertFromCharToBinary(characters)
 
+def test_empty_character_raises_error():
+    with pytest.raises(ValueError):
+        HuffmanTree.nonHuffman_convertFromCharToBinary('')
 
+@pytest.mark.parametrize(
+    ('binary', 'characters'),
+    [
+        ('01100001', 'a'),
+        ('01100010', 'b'),
+        ('00100000', ' '),
+        ('00100001', '!'),
+        ('01101111011010010110101101100001011100110110111001100100', 'oikasnd'),
+        ('0110100001100001011101000110010101110010011100110010000001100111011011110110111001101110011000010010000001101000011000010111010001100101', 'haters gonna hate')
+    ]
+)
+def test_can_convert_binary_to_char(binary:str, characters:str):
+    assert HuffmanTree.nonHuffman_convertFromBinaryToChar(binary) == characters
+
+@pytest.mark.parametrize(
+    ('binary'),
+    [
+        None,
+        {},
+        []
+    ]
+)
+def test_invalid_binary_raises_error(binary:any):
+    with pytest.raises(TypeError):
+        HuffmanTree.nonHuffman_convertFromBinaryToChar(binary)
+
+@pytest.mark.parametrize(
+    ('binary'),
+    [
+        pytest.param('', id='EmptyString'),
+        pytest.param('011000010', id='TooLongString'),
+        pytest.param('0110000', id='TooShortString'),        
+    ]
+)
+def test_invalid_binary_raises_error_with_an_invalid_string(binary:str):
+    with pytest.raises(ValueError):
+        HuffmanTree.nonHuffman_convertFromBinaryToChar(binary)
