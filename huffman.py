@@ -80,6 +80,36 @@ class HuffmanTree:
         with open(f'{self.folderPath}/WeightDictionary.json', 'w') as file:
             json.dump(self.getWeightDictionary(), file, indent=4)
 
+    def getSummaryReport(self) -> str:
+        summary = f'\n\n------ Running Huffman Tree on ------{self.folderPath}\n'
+        summary += f'Original text length: {len(self.originalText)}\n'
+        summary += f'Binary text length: {len(self.getBinaryString())}\n'
+        summary += f'Huffman text length: {len(self.getHuffmanBinaryString())}\n'
+        print(summary)
+
+        summaryDictionary = {}
+        summaryDictionary['Original text length'] = len(self.originalText)
+        summaryDictionary['Binary text length'] = len(self.getBinaryString())
+        summaryDictionary['Huffman text length'] = len(self.getHuffmanBinaryString())
+
+        return summaryDictionary
+
+    def restoreHuffmanString(self) -> str:
+        huffmanBinaryString = self.getHuffmanBinaryString()
+        currentStep = self.root
+        restoredString = ''
+        for i in huffmanBinaryString:
+            if i == '0':
+                currentStep = currentStep.getLeftBranch()
+            else:
+                currentStep = currentStep.getRightBranch()
+            
+            if currentStep.getLeftBranch() is None and currentStep.getRightBranch() is None:
+                restoredString += currentStep.value
+                currentStep = self.root
+        
+        return restoredString
+
     @staticmethod
     def getCharacterCount(text: str) -> typing.Dict[str, int]:
         '''Returns a dictionary of the count of each character in the text'''
@@ -119,8 +149,43 @@ class HuffmanTree:
         return ''.join(chr(int(binary[i:i+8], 2)) for i in range(0, len(binary), 8))
 
     @staticmethod
-    def recoverFromFolder(folderPath: str) -> 'HuffmanTree':
-        pass
+    def recoverFromFolder(folderPath: str, strict:bool=False) -> 'HuffmanTree':
+        tree = HuffmanTree(folderPath, False, strict)
+        with open(f'{tree.folderPath}/HuffmanDictionary.json', 'r') as file:
+            tree.__huffmanDictionary = json.load(file)
+        
+        weightDictionary = {}
+        with open(f'{tree.folderPath}/WeightDictionary.json', 'r') as file:
+            weightDictionary = json.load(file)
+
+        tree.root = Node(None, 0)
+        currentStep = tree.root
+        for i in tree.__huffmanDictionary:
+            for j in tree.__huffmanDictionary[i]:
+                if j == '0':
+                    if currentStep.getLeftBranch() is None:
+                        currentStep.assignLeft(Node(None, 0))
+                    currentStep = currentStep.getLeftBranch()
+
+                else:
+                    if currentStep.getRightBranch() is None:
+                        currentStep.assignRight(Node(None, 0))
+                    currentStep = currentStep.getRightBranch()
+            
+            currentStep.value = i
+            currentStep.weight = weightDictionary[i]
+            currentStep = tree.root
+        
+        def weightAssigner(currentStep:Node) -> int:
+            if currentStep.getLeftBranch() is None and currentStep.getRightBranch() is None:
+                return currentStep.weight
+            currentStep.weight = weightAssigner(currentStep.getLeftBranch()) + weightAssigner(currentStep.getRightBranch())
+            return currentStep.weight
+        
+        weightAssigner(tree.root)
+
+        return tree
+        
 
 
 if __name__ == '__main__':

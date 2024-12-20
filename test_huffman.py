@@ -6,7 +6,9 @@ import os
 ## Preset Parameters
 sampleData = [
     ('bee_movie', HuffmanTree('bee_movie', False, False)), 
-    ('lorem_ipsum', HuffmanTree('lorem_ipsum', False, False))
+    ('lorem_ipsum', HuffmanTree('lorem_ipsum', False, False)),
+    ('bee_movie', HuffmanTree.recoverFromFolder('bee_movie', False)),
+    ('lorem_ipsum', HuffmanTree.recoverFromFolder('lorem_ipsum', False))
 ]
 sampleFolders = [i[0] for i in sampleData]
 sampleTrees = [i[1] for i in sampleData]
@@ -289,3 +291,19 @@ def test_can_save_into_folder_with_a_temp_file(sample_folder, sample_content, tm
 def test_are_saved_files_correct(sample_folder):
     sample_huffman_tree = HuffmanTree(sample_folder, True)
     sample_huffman_tree.saveToFolder()
+
+@pytest.mark.parametrize('sample_tree', sampleTrees)
+def test_is_summary_report_correct(sample_tree:HuffmanTree):
+    sample_tree.balanceTree()
+    summaryDictionary = sample_tree.getSummaryReport()
+
+    assert summaryDictionary
+    assert summaryDictionary['Original text length'] == len(sample_tree.originalText)
+    assert summaryDictionary['Binary text length'] == len(sample_tree.getBinaryString())
+    assert summaryDictionary['Huffman text length'] == len(sample_tree.getHuffmanBinaryString())
+
+
+@pytest.mark.parametrize('sample_tree', sampleTrees)
+def test_is_string_restored_correctly(sample_tree:HuffmanTree):
+    sample_tree.balanceTree()
+    assert sample_tree.restoreHuffmanString() == sample_tree.originalText
