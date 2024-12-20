@@ -5,6 +5,7 @@ import json
 class HuffmanTree:
     def __init__(self, folderPath:str, balance:bool=True):
         self.folderPath = folderPath
+        self.originalText = open(f'Examples/{folderPath}/text.txt', 'r').read()
     
     def balanceTree(self):
         pass
@@ -29,7 +30,13 @@ class HuffmanTree:
 
     @staticmethod
     def getCharacterCount(text: str) -> typing.Dict[str, int]:
-        pass
+        count = {}
+        for char in text:
+            if char in count:
+                count[char] += 1
+            else:
+                count[char] = 1
+        return count
 
     @staticmethod
     def nonHuffman_convertFromCharToBinary(char: str) -> str:
