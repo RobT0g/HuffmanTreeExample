@@ -41,7 +41,11 @@ class HuffmanTree:
     @staticmethod
     def nonHuffman_convertFromCharToBinary(char: str) -> str:
         'REMINDER: make this also work with an actual string, not just char'
-        pass
+        ord(char)
+        convertedString = ''
+        for i in char:
+            convertedString += format(ord(i), '08b')
+        return convertedString
 
     @staticmethod
     def nonHuffman_convertFromBinaryToChar(binary: str) -> str:
