@@ -7,6 +7,8 @@ class HuffmanTree:
         self.folderPath = folderPath
         self.originalText = open(f'Examples/{folderPath}/text.txt', 'r').read()
         self.root:Node = None
+        if balance:
+            self.balanceTree()
     
     def balanceTree(self):
         count = HuffmanTree.getCharacterCount(self.originalText)

@@ -6,7 +6,9 @@ import typing
 sampleData = [
     ('bee_movie', HuffmanTree('bee_movie', False)), 
     ('lorem_ipsum', HuffmanTree('lorem_ipsum', False))
-] 
+]
+sampleFolders = [i[0] for i in sampleData]
+sampleTrees = [i[1] for i in sampleData]
 
 def __getSampleText(folderPath: str) -> str:
     return open(f'Examples/{folderPath}/text.txt', 'r').read()
@@ -21,8 +23,8 @@ def test_can_instantiate_huffman_tree(sample_folder:str, sample_huffman_tree:Huf
 def test_is_reading_text_file(sample_folder:str, sample_huffman_tree:HuffmanTree):
     assert sample_huffman_tree.originalText == __getSampleText(sample_folder)
 
-@pytest.mark.parametrize('sample_folder, sample_huffman_tree', sampleData)
-def test_can_get_character_count(sample_folder:str, sample_huffman_tree:HuffmanTree):
+@pytest.mark.parametrize('sample_folder', sampleFolders)
+def test_can_get_character_count(sample_folder:str):
     sample_text = __getSampleText(sample_folder)
     count = HuffmanTree.getCharacterCount(sample_text)
     actualCount = {}
@@ -103,7 +105,7 @@ def test_invalid_binary_raises_error_with_an_invalid_string(binary:str):
     with pytest.raises(ValueError):
         HuffmanTree.nonHuffman_convertFromBinaryToChar(binary)
 
-def __navigationWeightTester(node:Node, levelWeight:typing.List[typing.List[int]], currentLevel=0) -> int:
+def __navigationWeightTester(node:Node, levelWeight:typing.List[typing.List[int]], currentLevel=0) -> None:
     if len(levelWeight) < currentLevel+1:
         levelWeight.append([])
     
@@ -125,16 +127,25 @@ def __navigationWeightTester(node:Node, levelWeight:typing.List[typing.List[int]
     __navigationWeightTester(node.getLeftBranch(), levelWeight, currentLevel+1)
     __navigationWeightTester(node.getRightBranch(), levelWeight, currentLevel+1)    
 
-@pytest.mark.parametrize('sample_folder, sample_huffman_tree', sampleData)
-def test_can_balance_tree(sample_folder:str, sample_huffman_tree:HuffmanTree):
-    sample_huffman_tree.balanceTree()
-    assert sample_huffman_tree
-    assert sample_huffman_tree.root
+def __isTreeBalanced(tree:HuffmanTree) -> None:
+    assert tree
+    assert tree.root
 
     levelWeights = []
-    __navigationWeightTester(sample_huffman_tree.root, levelWeights)
+    __navigationWeightTester(tree.root, levelWeights)
 
     for i in range(len(levelWeights)-1):
         assert levelWeights[i][0] >= levelWeights[i+1][1]
+
+@pytest.mark.parametrize('sample_huffman_tree', sampleTrees)
+def test_can_balance_tree(sample_huffman_tree:HuffmanTree):
+    sample_huffman_tree.balanceTree()
+    __isTreeBalanced(sample_huffman_tree)
+
+@pytest.mark.parametrize('sample_folder', sampleFolders)
+def test_tree_is_balanced_at_constructor(sample_folder):
+    sample_huffman_tree = HuffmanTree(sample_folder, True)
+    __isTreeBalanced(sample_huffman_tree)
+
 
 
