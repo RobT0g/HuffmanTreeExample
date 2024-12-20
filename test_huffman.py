@@ -28,14 +28,24 @@ def test_can_get_character_count(sample_folder:str):
     sample_text = __getSampleText(sample_folder)
     count = HuffmanTree.getCharacterCount(sample_text)
     actualCount = {}
+
     for char in sample_text:
         if char in actualCount:
             actualCount[char] += 1
         else:
             actualCount[char] = 1
+
     for i in actualCount:
         assert count[i] == actualCount[i]
-    
+
+@pytest.mark.parametrize('sample_huffman_tree', sampleTrees)
+def test_can_get_instance_character_count(sample_huffman_tree:HuffmanTree):
+    count = sample_huffman_tree.getWeightDictionary()
+    actualCount = HuffmanTree.getCharacterCount(sample_huffman_tree.originalText)
+
+    for i in actualCount:
+        assert count[i] == actualCount[i]
+
 @pytest.mark.parametrize(
     ('characters', 'binary'),
     [
@@ -147,5 +157,33 @@ def test_tree_is_balanced_at_constructor(sample_folder):
     sample_huffman_tree = HuffmanTree(sample_folder, True)
     __isTreeBalanced(sample_huffman_tree)
 
+def __checkDictionary(dictionary:typing.Dict[str, str], tree:Node) -> None:
+    for i in dictionary:
+        currentNode = tree
 
+        for j in dictionary[i]:
+            assert j in ['0', '1']
+            
+            if j == '0':
+                currentNode = currentNode.getLeftBranch()
+            else:
+                currentNode = currentNode.getRightBranch()
+            
+        assert currentNode.value == i
 
+@pytest.mark.parametrize('sample_huffman_tree', sampleTrees)
+def test_can_map_dictionary(sample_huffman_tree:HuffmanTree):
+    sample_huffman_tree.balanceTree()
+    
+    huffmanDictionary = sample_huffman_tree.getHuffmanDictionary()
+    assert huffmanDictionary
+
+    __checkDictionary(huffmanDictionary, sample_huffman_tree.root)
+
+@pytest.mark.parametrize('sample_folder', sampleFolders)
+def test_can_map_dictionary_at_constructor(sample_folder):
+    sample_huffman_tree = HuffmanTree(sample_folder, True)
+    huffmanDictionary = sample_huffman_tree.getHuffmanDictionary()
+    assert huffmanDictionary
+
+    __checkDictionary(huffmanDictionary, sample_huffman_tree.root)

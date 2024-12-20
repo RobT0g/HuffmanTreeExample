@@ -7,11 +7,12 @@ class HuffmanTree:
         self.folderPath = folderPath
         self.originalText = open(f'Examples/{folderPath}/text.txt', 'r').read()
         self.root:Node = None
+        self.__huffmanDictionary:typing.Dict[str, str] = {}
         if balance:
             self.balanceTree()
     
     def balanceTree(self):
-        count = HuffmanTree.getCharacterCount(self.originalText)
+        count = self.getWeightDictionary()
         orderedAmounts = BalancedList()
         characterPos:typing.List[Node] = []
         
@@ -33,9 +34,15 @@ class HuffmanTree:
             characterPos.insert(pos[2], newNode)
         
         self.root = characterPos[0]
+        self.mapDictionary(self.root)
 
-    def mapDictionary(self, currentStep:Node|None=None, binaryString:str=''):
-        pass
+    def mapDictionary(self, currentStep:Node|None, binaryString:str=''):
+        if currentStep.getLeftBranch() is None and currentStep.getRightBranch() is None:
+            self.__huffmanDictionary[currentStep.value] = binaryString
+            return
+        
+        self.mapDictionary(currentStep.getLeftBranch(), binaryString+'0')
+        self.mapDictionary(currentStep.getRightBranch(), binaryString+'1')
 
     def getBinaryString(self) -> str:
         pass
@@ -44,10 +51,10 @@ class HuffmanTree:
         pass
 
     def getHuffmanDictionary(self) -> typing.Dict[str, str]:
-        pass
+        return self.__huffmanDictionary
 
     def getWeightDictionary(self) -> typing.Dict[str, int]:
-        pass
+        return self.getCharacterCount(self.originalText)
 
     def saveToFolder(self) -> None:
         pass
