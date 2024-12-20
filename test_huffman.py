@@ -47,6 +47,23 @@ def test_can_get_instance_character_count(sample_huffman_tree:HuffmanTree):
         assert count[i] == actualCount[i]
 
 @pytest.mark.parametrize(
+    'characters', 
+    [
+        1,
+        [],
+        {},
+        None
+    ]
+)
+def test_invalid_characters_raises_error(characters:any):
+    with pytest.raises(TypeError):
+        HuffmanTree.getCharacterCount(characters)
+
+def test_empty_characters_raises_error():
+    with pytest.raises(ValueError):
+        HuffmanTree.getCharacterCount('')
+
+@pytest.mark.parametrize(
     ('characters', 'binary'),
     [
         ('a', '01100001'),
@@ -187,3 +204,5 @@ def test_can_map_dictionary_at_constructor(sample_folder):
     assert huffmanDictionary
 
     __checkDictionary(huffmanDictionary, sample_huffman_tree.root)
+
+

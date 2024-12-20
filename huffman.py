@@ -62,12 +62,19 @@ class HuffmanTree:
     @staticmethod
     def getCharacterCount(text: str) -> typing.Dict[str, int]:
         '''Returns a dictionary of the count of each character in the text'''
+        
+        if type(text) != str:
+            raise TypeError('Input must be a string')
+        if len(text) == 0:
+            raise ValueError('Input must not be empty')
+        
         count = {}
         for char in text:
             if char in count:
                 count[char] += 1
             else:
                 count[char] = 1
+        
         return count
 
     @staticmethod
