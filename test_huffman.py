@@ -1,11 +1,12 @@
 from huffman import *
 import pytest
 import typing
+import os
 
 ## Preset Parameters
 sampleData = [
-    ('bee_movie', HuffmanTree('bee_movie', False)), 
-    ('lorem_ipsum', HuffmanTree('lorem_ipsum', False))
+    ('bee_movie', HuffmanTree('bee_movie', False, False)), 
+    ('lorem_ipsum', HuffmanTree('lorem_ipsum', False, False))
 ]
 sampleFolders = [i[0] for i in sampleData]
 sampleTrees = [i[1] for i in sampleData]
@@ -17,7 +18,7 @@ def __getSampleText(folderPath: str) -> str:
 def test_can_instantiate_huffman_tree(sample_folder:str, sample_huffman_tree:HuffmanTree):
     assert sample_huffman_tree
     assert isinstance(sample_huffman_tree, HuffmanTree)
-    assert sample_huffman_tree.folderPath == sample_folder
+    assert sample_huffman_tree.folderPath == f'Examples/{sample_folder}'
 
 @pytest.mark.parametrize('sample_folder, sample_huffman_tree', sampleData)
 def test_is_reading_text_file(sample_folder:str, sample_huffman_tree:HuffmanTree):
@@ -205,4 +206,86 @@ def test_can_map_dictionary_at_constructor(sample_folder):
 
     __checkDictionary(huffmanDictionary, sample_huffman_tree.root)
 
+@pytest.mark.parametrize('sample_huffman_tree', sampleTrees)
+def test_can_get_binary_string(sample_huffman_tree:HuffmanTree):
+    sample_huffman_tree.balanceTree()
+    binaryString = sample_huffman_tree.getBinaryString()
+    assert binaryString
 
+    for i in binaryString:
+        assert i in ['0', '1']
+
+    convertedBinary = HuffmanTree.nonHuffman_convertFromCharToBinary(sample_huffman_tree.originalText)
+    assert binaryString == convertedBinary 
+
+@pytest.mark.parametrize('sample_huffman_tree', sampleTrees)
+def test_can_get_huffman_binary_string(sample_huffman_tree:HuffmanTree):
+    sample_huffman_tree.balanceTree()
+    huffmanBinaryString = sample_huffman_tree.getHuffmanBinaryString()
+    assert huffmanBinaryString
+
+    for i in huffmanBinaryString:
+        assert i in ['0', '1']
+
+    actualBinary = ''
+    dictionary = sample_huffman_tree.getHuffmanDictionary()
+    for i in sample_huffman_tree.originalText:
+        actualBinary += dictionary[i]
+    
+    assert huffmanBinaryString == actualBinary
+
+@pytest.mark.parametrize('sample_folder', sampleFolders)
+def test_can_save_into_the_folder_pre_created_samples_probably_will_always_pass(sample_folder):
+    sample_huffman_tree = HuffmanTree(sample_folder, True)
+    sample_huffman_tree.saveToFolder()
+
+    assert open(f'Examples/{sample_folder}/text_binary.txt', 'r').read()
+    assert open(f'Examples/{sample_folder}/text_binary_huffman.txt', 'r').read()
+    assert open(f'Examples/{sample_folder}/HuffmanDictionary.json', 'r').read()
+    assert open(f'Examples/{sample_folder}/WeightDictionary.json', 'r').read()
+
+@pytest.mark.parametrize(
+    ('sample_folder'),
+    [
+        ('SampleFolderWithAnUniqueName'),
+        ('AnotherSampleFolderWithAnUniqueName')
+    ]
+)
+def test_can_pass_a_strict_folder_location(sample_folder, tmp_path):
+    d = tmp_path / sample_folder
+    d.mkdir()
+    p = d / 'text.txt'
+    p.write_text("Dont care")
+    
+    sample_huffman_tree = HuffmanTree(str(d), False, True)
+    assert sample_huffman_tree
+
+@pytest.mark.parametrize(
+    ('sample_folder', 'sample_content'),
+    [
+        ('SampleFolderWithAnUniqueName', 'SampleContentWithAnUniqueName'),
+        ('AnotherSampleFolderWithAnUniqueName', 'AnotherSampleContentWithAnUniqueName')
+    ]
+)
+def test_can_save_into_folder_with_a_temp_file(sample_folder, sample_content, tmp_path):
+    d = tmp_path / f'{sample_folder}'
+    d.mkdir()
+    p = d / f'text.txt'
+    p.write_text(sample_content)
+    
+    sample_huffman_tree = HuffmanTree(str(d), True, True)
+    sample_huffman_tree.saveToFolder()
+
+    files = os.listdir(d)
+    for file in files:
+        print(file)
+
+    assert open(d / 'text_binary.txt', 'r').read()
+    assert open(d / 'text_binary_huffman.txt', 'r').read()
+    assert open(d / 'HuffmanDictionary.json', 'r').read()
+    assert open(d / 'WeightDictionary.json', 'r').read()
+
+@pytest.mark.parametrize('sample_folder', sampleFolders)
+def test_are_saved_files_correct(sample_folder):
+    sample_huffman_tree = HuffmanTree(sample_folder, True)
+    sample_huffman_tree.saveToFolder()

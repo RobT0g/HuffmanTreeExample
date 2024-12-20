@@ -3,11 +3,19 @@ import typing
 import json
 
 class HuffmanTree:
-    def __init__(self, folderPath:str, balance:bool=True):
-        self.folderPath = folderPath
-        self.originalText = open(f'Examples/{folderPath}/text.txt', 'r').read()
+    def __init__(self, folderPath:str, balance:bool=True, strict:bool=False) -> None:
+        if strict:
+            self.folderPath = folderPath
+        else:
+            self.folderPath = f'Examples/{folderPath}'
+
+        self.originalText = ''
+        with open(f'{self.folderPath}/text.txt', 'r') as file:
+            self.originalText = file.read()
+        
         self.root:Node = None
         self.__huffmanDictionary:typing.Dict[str, str] = {}
+
         if balance:
             self.balanceTree()
     
@@ -45,10 +53,13 @@ class HuffmanTree:
         self.mapDictionary(currentStep.getRightBranch(), binaryString+'1')
 
     def getBinaryString(self) -> str:
-        pass
+        return self.nonHuffman_convertFromCharToBinary(self.originalText)
 
     def getHuffmanBinaryString(self) -> str:
-        pass
+        binaryString = ''
+        for i in self.originalText:
+            binaryString += self.__huffmanDictionary[i]
+        return binaryString
 
     def getHuffmanDictionary(self) -> typing.Dict[str, str]:
         return self.__huffmanDictionary
@@ -57,7 +68,17 @@ class HuffmanTree:
         return self.getCharacterCount(self.originalText)
 
     def saveToFolder(self) -> None:
-        pass
+        with open(f'{self.folderPath}/HuffmanDictionary.json', 'w') as file:
+            json.dump(self.__huffmanDictionary, file, indent=4)
+        
+        with open(f'{self.folderPath}/text_binary.txt', 'w') as file:
+            file.write(self.getBinaryString())
+        
+        with open(f'{self.folderPath}/text_binary_huffman.txt', 'w') as file:
+            file.write(self.getHuffmanBinaryString())
+        
+        with open(f'{self.folderPath}/WeightDictionary.json', 'w') as file:
+            json.dump(self.getWeightDictionary(), file, indent=4)
 
     @staticmethod
     def getCharacterCount(text: str) -> typing.Dict[str, int]:
@@ -102,3 +123,5 @@ class HuffmanTree:
         pass
 
 
+if __name__ == '__main__':
+    testingTree = HuffmanTree('bee_movie', True, False)
