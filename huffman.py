@@ -6,9 +6,31 @@ class HuffmanTree:
     def __init__(self, folderPath:str, balance:bool=True):
         self.folderPath = folderPath
         self.originalText = open(f'Examples/{folderPath}/text.txt', 'r').read()
+        self.root:Node = None
     
     def balanceTree(self):
-        pass
+        count = HuffmanTree.getCharacterCount(self.originalText)
+        orderedAmounts = BalancedList()
+        characterPos:typing.List[Node] = []
+        
+        for i in count:
+            pos = orderedAmounts.insertOrdered(count[i])
+            characterPos.insert(pos[1], Node(i, count[i]))
+        
+        for i in range(len(characterPos)-1):
+            newNode = Node(None, characterPos[0].weight + characterPos[1].weight)
+            newNode.assignLeft(characterPos[0])
+            newNode.assignRight(characterPos[1])
+            
+            characterPos.pop(0)
+            characterPos.pop(0)
+            orderedAmounts.dropVal(0)
+            orderedAmounts.dropVal(0)
+            
+            pos = orderedAmounts.insertOrdered(newNode.weight)
+            characterPos.insert(pos[2], newNode)
+        
+        self.root = characterPos[0]
 
     def mapDictionary(self, currentStep:Node|None=None, binaryString:str=''):
         pass

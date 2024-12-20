@@ -4,8 +4,8 @@ import typing
 
 ## Preset Parameters
 sampleData = [
-    ('bee_movie', HuffmanTree('bee_movie')), 
-    ('lorem_ipsum', HuffmanTree('lorem_ipsum'))
+    ('bee_movie', HuffmanTree('bee_movie', False)), 
+    ('lorem_ipsum', HuffmanTree('lorem_ipsum', False))
 ] 
 
 def __getSampleText(folderPath: str) -> str:
@@ -102,3 +102,39 @@ def test_invalid_binary_raises_error(binary:any):
 def test_invalid_binary_raises_error_with_an_invalid_string(binary:str):
     with pytest.raises(ValueError):
         HuffmanTree.nonHuffman_convertFromBinaryToChar(binary)
+
+def __navigationWeightTester(node:Node, levelWeight:typing.List[typing.List[int]], currentLevel=0) -> int:
+    if len(levelWeight) < currentLevel+1:
+        levelWeight.append([])
+    
+    if len(levelWeight[currentLevel]) == 0:
+        levelWeight[currentLevel].append(node.weight)
+        levelWeight[currentLevel].append(node.weight)
+    
+    elif levelWeight[currentLevel][0] > node.weight:
+        levelWeight[currentLevel][0] = node.weight
+    
+    elif levelWeight[currentLevel][1] < node.weight:
+        levelWeight[currentLevel][1] = node.weight
+    
+    if node.getLeftBranch() is None and node.getRightBranch() is None:
+        return
+    
+    assert node.weight == node.getLeftBranch().weight + node.getRightBranch().weight
+    
+    __navigationWeightTester(node.getLeftBranch(), levelWeight, currentLevel+1)
+    __navigationWeightTester(node.getRightBranch(), levelWeight, currentLevel+1)    
+
+@pytest.mark.parametrize('sample_folder, sample_huffman_tree', sampleData)
+def test_can_balance_tree(sample_folder:str, sample_huffman_tree:HuffmanTree):
+    sample_huffman_tree.balanceTree()
+    assert sample_huffman_tree
+    assert sample_huffman_tree.root
+
+    levelWeights = []
+    __navigationWeightTester(sample_huffman_tree.root, levelWeights)
+
+    for i in range(len(levelWeights)-1):
+        assert levelWeights[i][0] >= levelWeights[i+1][1]
+
+
